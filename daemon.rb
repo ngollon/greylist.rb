@@ -1,6 +1,6 @@
 require 'socket'
-require './directory_based_list.rb'
-require './logging.rb'
+require_relative 'directory_based_list.rb'
+require_relative 'logging.rb'
 
 module Greylist
   class Daemon
