@@ -1,14 +1,12 @@
 #!/usr/bin/ruby
 
-require './options.rb'
+require '/etc/greylist/config.rb'
 require './daemon.rb'
 
+abort "Usage greylist.rb <start|stop>" unless ARGV.count == 1 and (ARGV[0] == 'start' || ARGV[0] == 'stop')
 
-options = Greylisting::Options.new(ARGV)
-abort options.help unless ARGV.count == 1 and (ARGV[0] == 'start' || ARGV[0] == 'stop')
-
-daemon = Greylisting::Daemon.new(options)
-Greylisting::Logging.configure(options.logfile, options.loglevel)
+daemon = Greylist::Daemon.new(Greylist::Config)
+Greylist::Logging.configure(Greylist::Config.logfile, Greylist::Config.loglevel)
 
 if ARGV[0] == 'start'
   daemon.start

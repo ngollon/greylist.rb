@@ -1,4 +1,4 @@
-module Greylisting
+module Greylist
   class DirectoryBasedList    
     def initialize(path)
       @path = path

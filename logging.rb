@@ -1,4 +1,4 @@
-module Greylisting
+module Greylist
   module Logging
     def logger
       Logging.logger
