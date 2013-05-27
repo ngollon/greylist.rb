@@ -60,25 +60,32 @@ module Greylist
       logger.info('Started')     
 
       while (socket = server.accept)
-        begin   # rescue
+        begin   # rescue          
           input = socket.gets
+          logger.info("Incomming request: #{input}")          
           sender, destination = input.split
 # todo: check inputs
           if not optinlist.contains?(destination)
+            logger.info("Greylisting disabled for #{destination}")
             socket.print '.Greylisting disabled for destination'
           elsif whitelist.contains?(sender)
+            logger.info("Sender #{sender} whitelisted ")
             socket.print '.Sender whitelisted'
           else
             if greylist.contains?(sender + destination)
               time_difference = Time.now - greylist.ctime(sender + destination)
               if time_difference > @config.delay * 60
+                logger.info("Retry for message from #{sender} to #{destination} successful.")
                 greylist.remove(sender + destination)
+                logger.info("Adding #{sender} to whitelist.")
                 whitelist.add(sender)
                 socket.print ":X-Greylist: Delayed for #{time_difference.round} seconds"
               else
+                logger.info("Retry for message from #{sender} to #{destination} too early.")
                 socket.print '!Greylisted'
               end
             else
+              logger.info("Greylisted message from #{sender} to #{destination}")
               greylist.add(sender + destination)
               socket.print '!Greylisted'
             end
