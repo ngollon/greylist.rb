@@ -26,7 +26,7 @@ module Greylist
       logger.info("Opt-in directory: #{@config.opt_in_directory}")      
 
       Process.daemon
-      File.write(@config.pidfile, Process.pid)
+      File.open(@config.pidfile, 'w') { |file| file.write(Process.pid) }
     
       logger.info("Process ID: #{Process.pid}")
 
