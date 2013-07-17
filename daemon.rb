@@ -60,7 +60,7 @@ module Greylist
       while (socket = server.accept)
         begin   # rescue          
           input = socket.gets
-          logger.info("Incomming request: #{input.chop}")          # chopping here removes the newline
+          logger.info("Incomming request: #{input}")          # chopping here removes the newline
           sender, destination = input.split
 # todo: check inputs
           if not optinlist.contains?(destination)
