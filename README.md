@@ -21,4 +21,9 @@ warn log_message = greylist retry successful for host $sender_host_address
 # Add a log message for greylist feedback
 warn log_message = greylist message ${substr_1:$acl_m0}
      condition   = ${if eq {${substr_0_1:$acl_m0}} {.} }
+
+# Check blacklists and warn
+  warn    dnslists      = zen.spamhaus.org : ix.dnsbl.manitu.net : dnsbl.inps.de
+          add_header    = X-Blacklist: $sender_host_address is blacklisted at $dnslist_domain
+          log_message   = found in $dnslist_domain
 ```
