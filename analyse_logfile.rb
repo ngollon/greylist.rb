@@ -1,10 +1,23 @@
-#!/usr/local/bin/ruby
+#!/usr/bin/ruby
 
-require_relative 'config.rb'
+require_relative '/etc/greylist/config.rb'
 
 counts = { :white => 0, :grey_delivered => 0, :grey_rejected => 0 }
 
+if ARGV.count > 0
+  desired_user = ARGV[0]
+  puts "Stats for user #{desired_user}"
+end
+
+user = ""
+
 File.open(Greylist::Config.logfile).each do |line|
+  if line =~ /Incomming.* (\w+)$/ 
+    user = $1        
+  end
+
+  next if not desired_user.nil? and user != desired_user 
+
   if line =~ /ERROR/
     puts line
   end
