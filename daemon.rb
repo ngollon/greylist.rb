@@ -26,6 +26,9 @@ module Greylist
       logger.info("Opt-in directory: #{@config.opt_in_directory}")      
 
       Process.daemon
+      logger.info("Daemon started.")
+
+      Dir.mkdir(File.dirname(@config.pidfile)) unless File.exists?(File.dirname(@config.pidfile))
       File.open(@config.pidfile, 'w') { |file| file.write(Process.pid) }
     
       logger.info("Process ID: #{Process.pid}")
@@ -50,6 +53,7 @@ module Greylist
       File.unlink(@config.socketfile) if File.exists?(@config.socketfile) && File.socket?(@config.socketfile)
 
       server = UNIXServer.new(@config.socketfile)
+      File.chmod(0777, @config.socketfile)
 
       whitelist = DirectoryBasedList.new(@config.whitelist_directory)
       greylist = DirectoryBasedList.new(@config.greylist_directory)
