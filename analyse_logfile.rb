@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-require_relative '/etc/greylist/config.rb'
+require_relative '/etc/greylist.rb/config.rb'
 
 counts = { :white => 0, :grey_delivered => 0, :grey_rejected => 0 }
 

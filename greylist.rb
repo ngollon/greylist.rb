@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-require '/etc/greylist/config.rb'
+require '/etc/greylist.rb/config.rb'
 require_relative 'daemon.rb'
 
 abort "Usage greylist.rb <start|stop>" unless ARGV.count == 1 and (ARGV[0] == 'start' || ARGV[0] == 'stop')
