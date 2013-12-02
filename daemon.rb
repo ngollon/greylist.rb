@@ -1,4 +1,5 @@
 require 'socket'
+require 'etc'
 require_relative 'directory_based_list.rb'
 require_relative 'logging.rb'
 
@@ -11,13 +12,19 @@ module Greylist
     end
 
     def start
+      # Setup Environment as root
+      create_and_configure_directory(File.dirname(@config.pidfile))
+      create_and_configure_directory(File.dirname(@config.socketfile))
+      
+      # Switch to limited user
+      user = Etc.getpwnam(@config.user)
+      Process::Sys.setuid(user.uid)
+
       abort "Daemon already running. Check the pidfile at #{@config.pidfile}" if File.exists?(@config.pidfile)
 
       # Check config
       abort "Whitelist directory #{@config.whitelist_directory} does not exist or is not writabable" unless File.exists?(@config.whitelist_directory) and File.writable?(@config.whitelist_directory)
-
       abort "Greylist directory #{@config.greylist_directory} does not exist or is not writable" unless File.exists?(@config.greylist_directory) and File.writable?(@config.greylist_directory)
-
       abort "Opt-in directory #{@config.opt_in_directory} does not exist" unless File.exists?(@config.opt_in_directory)
 
       logger.info("Initializing Greylist.rb, version 0.1")
@@ -28,12 +35,21 @@ module Greylist
       Process.daemon
       logger.info("Daemon started.")
 
-      Dir.mkdir(File.dirname(@config.pidfile)) unless File.exists?(File.dirname(@config.pidfile))
       File.open(@config.pidfile, 'w') { |file| file.write(Process.pid) }
     
       logger.info("Process ID: #{Process.pid}")
 
       self.run
+    end
+
+    def create_and_configure_directory(directory)
+      if not File.exists?(directory)
+        Dir.mkdir(directory)
+        if @config.user
+          user = Etc.getpwnam(@config.user)
+          File.chown(user.uid, user.gid, directory)
+        end
+      end      
     end
 
     def stop

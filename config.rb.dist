@@ -11,6 +11,7 @@ module Greylist
       :socketfile          => '/var/run/greylist.rb/greylist.sock',
       :pidfile             => '/var/run/greylist.rb/greylist.pid',
       :logfile             => '/var/log/greylist.rb/greylist.log',
+      :user                => 'greylist'
       :loglevel            => Logger::INFO,
     }
     
